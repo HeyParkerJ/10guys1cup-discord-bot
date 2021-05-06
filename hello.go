@@ -51,7 +51,17 @@ func init() {
 }
 
 func main() {
-	fmt.Printf("%s uses %s\n", os.Getenv("NAME"), os.Getenv("EDITOR"))
+	var envs map[string]string
+	envs, err := godotenv.Read(".env")
+
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	name := envs["NAME"]
+	editor := envs["EDITOR"]
+
+	fmt.Printf("%s uses %s\n", name, editor)
 
 	const prefix = "!"
 
