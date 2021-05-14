@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
 
 	"github.com/andersfylling/disgord"
@@ -58,16 +57,13 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	name := envs["NAME"]
-	editor := envs["EDITOR"]
-
-	fmt.Printf("%s uses %s\n", name, editor)
+	discordToken := envs["DISCORD_TOKEN"]
 
 	const prefix = "!"
 
 	client := disgord.New(disgord.Config{
-		ProjectName: "MyBot",
-		BotToken:    os.Getenv("DISCORD_TOKEN"),
+		ProjectName: "DadBot",
+		BotToken:    discordToken,
 		Logger:      log,
 		RejectEvents: []string{
 			// rarely used, and causes unnecessary spam
