@@ -42,22 +42,24 @@ func handleMsg(s disgord.Session, data *disgord.MessageCreate) {
 }
 
 func init() {
-	err := godotenv.Load(".env")
+	// In non prod, will load the contents of .env to environment variables
+	if os.Getenv("APP_ENV") != "production" {
+		err := godotenv.Load(".env")
 
-	if err != nil {
-		log.Fatal("Error loading .env file")
+		if err != nil {
+			log.Fatal("Error loading .env file")
+		}
 	}
 }
 
 func main() {
-	var envs map[string]string
-	envs, err := godotenv.Read(".env")
+	// var envs map[string]string
+	// envs, err := godotenv.Read(".env")
+	// if err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// }
 
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
-	discordToken := envs["DISCORD_TOKEN"]
+	discordToken := os.Getenv("DISCORD_TOKEN")
 
 	const prefix = "!"
 
