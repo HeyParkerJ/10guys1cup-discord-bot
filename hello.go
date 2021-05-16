@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"os"
+	// "regexp"
+	"strings"
 
 	"github.com/andersfylling/disgord"
 	"github.com/andersfylling/disgord/std"
@@ -32,11 +34,17 @@ func checkErr(err error, trace string) {
 func handleMsg(s disgord.Session, data *disgord.MessageCreate) {
 	msg := data.Message
 
-	switch msg.Content {
-	case "ping": // whenever the message written is "ping", the bot replies "pong"
+	// Declare regex matchers for contain checks
+	// r, _ := regexp.Compile("tilt")
+
+	if msg.Content == "ping" {
 		_, err := msg.Reply(noCtx, s, "pong")
 		checkErr(err, "ping command")
-	default: // unknown command, bot does nothing.
+	} else if strings.Contains("tilt", msg.Content) {
+		reply := "Dude FUCK THIS YEAR. Honestly garbage. Playing the fucking highest scorer every fucking week but still putting up points while the rest of the shit teams get wins. Fuck this dude. I'll auto draft next year. Full fuckin tilt."
+		_, err := msg.Reply(noCtx, s, reply)
+		checkErr(err, "tilt response")
+	} else {
 		return
 	}
 }
@@ -93,15 +101,16 @@ func main() {
 
 	logFilter, _ := std.NewLogFilter(client)
 	filter, _ := std.NewMsgFilter(context.Background(), client)
-	filter.SetPrefix(prefix)
+	// Gonna go without a prefix for now
+	// filter.SetPrefix(prefix)
 
 	// create a handler and bind it to new message events
 	// thing about the middlewares are whitelists or passthrough functions.
 	client.Gateway().WithMiddleware(
-		filter.NotByBot,    // ignore bot messages
-		filter.HasPrefix,   // message must have the given prefix
-		logFilter.LogMsg,   // log command message
-		filter.StripPrefix, // remove the command prefix from the message
+		filter.NotByBot, // ignore bot messages
+		// filter.HasPrefix,   // message must have the given prefix
+		logFilter.LogMsg, // log command message
+		// filter.StripPrefix, // remove the command prefix from the message
 	).MessageCreate(handleMsg)
 
 	// create a handler and bind it to the bot init
